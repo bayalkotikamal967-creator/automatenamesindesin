@@ -1,0 +1,26 @@
+@import url('https://fonts.googleapis.com/css2?family=Alex+Brush&family=Great+Vibes&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Playball&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
+@import "tailwindcss";
+
+@layer base {
+  body {
+    background-color: #fcf9f5;
+    color: #3e2723;
+    font-family: 'Montserrat', system-ui, -apple-system, sans-serif;
+  }
+}
+
+/* Custom scrollbars for a premium editorial design */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #fbf8f3;
+}
+::-webkit-scrollbar-thumb {
+  background: #d7ccc8;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #bcaaa4;
+}
