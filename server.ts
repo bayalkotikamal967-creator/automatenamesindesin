@@ -98,8 +98,30 @@ app.get("/api/health", (req: Request, res: Response) => {
   res.json({ status: "ok", time: new Date() });
 });
 
-// Serve the assets directory statically so we can fetch '/assets/template.png' cleanly in development and production
-app.use("/assets", express.static(path.join(process.cwd(), "assets")));
+// Enable global CORS headers to allow cross-origin resource sharing, vital for iframe environments like AI Studio
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, PATCH, DELETE");
+  res.setHeader("Access-Control-Allow-Headers", "X-Requested-With,content-type,Authorization");
+  if (req.method === "OPTIONS") {
+    res.sendStatus(200);
+  } else {
+    next();
+  }
+});
+
+// Serve the assets directories statically so we can fetch template assets with clean CORS support
+app.use("/assets", express.static(path.join(process.cwd(), "public", "assets"), {
+  setHeaders: (res) => {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+  }
+}));
+
+app.use("/assets", express.static(path.join(process.cwd(), "assets"), {
+  setHeaders: (res) => {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+  }
+}));
 
 // Retrieve template status (whether high-fidelity master card exists in /assets/template.png)
 app.get("/api/template-status", (req: Request, res: Response) => {
@@ -154,7 +176,11 @@ async function setupVite() {
   } else {
     console.log("Starting server in PRODUCTION mode...");
     const distPath = path.join(process.cwd(), "dist");
-    app.use(express.static(distPath));
+    app.use(express.static(distPath, {
+      setHeaders: (res) => {
+        res.setHeader("Access-Control-Allow-Origin", "*");
+      }
+    }));
     app.get("*", (req: Request, res: Response) => {
       res.sendFile(path.join(distPath, "index.html"));
     });
