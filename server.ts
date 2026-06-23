@@ -49,7 +49,7 @@ app.post("/api/gemini/generate", async (req: Request, res: Response) => {
   try {
     const { guestName } = req.body;
     const prompt = `You are the host of C Cube Cottage - "Chatta Chiya Chat" in Madhutar, Kamalamai-5, Sindhuli, Nepal, which now celebrates delicious foods.
-We are celebrating our Grand Opening on 2083/03/10 BS (Bikram Sambat Nepalese calendar) at 10:00 AM.
+We are celebrating our Grand Opening on 2083/03/10 BS (Bikram Sambat Nepalese calendar) at 3:00 PM.
 Generate exactly 4 diverse social media or WhatsApp invitation messages (captions) inviting${guestName ? ` specifically our special guest '${guestName}'` : ' guests'} to the Grand Opening of C Cube Cottage.
 The 4 variations should have these specific tones/categories:
 - Polite (respectful, formal invitation format centered on culinary delight)

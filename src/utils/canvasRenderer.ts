@@ -14,85 +14,94 @@ export function drawInvitation(
     customBackground?: string | null;
   },
   onComplete?: () => void
-) {
-  const ctx = canvas.getContext("2d");
-  if (!ctx) return;
-
-  const fontFamily = config?.fontFamily || "Great Vibes";
-  const customFontSize = config?.fontSize || 64;
-  const yOffset = config?.yOffset !== undefined ? config.yOffset : 0;
-  const xOffset = config?.xOffset !== undefined ? config.xOffset : 0;
-  
-  // Choose custom background uploaded, or default to the original attached image card
-  const bgImageSource = config?.customBackground || "/assets/width_1054.svg";
-
-  const width = 1200;
-  const height = 1680;
-  canvas.width = width;
-  canvas.height = height;
-
-  // Set default anti-aliasing
-  ctx.imageSmoothingEnabled = true;
-  ctx.imageSmoothingQuality = "high";
-
-  const img = new Image();
-  img.crossOrigin = "anonymous";
-  img.src = bgImageSource;
-  
-  img.onload = () => {
-    // 1. Draw template image across the exact template resolution
-    ctx.drawImage(img, 0, 0, width, height);
-
-    // 2. Draw all static template text content programmatically if USING DEFAULT TEMPLATE
-    // This resolves the web sandboxing block where SVG text font-family fallbacks to cursive/Arial
-    if (!config?.customBackground) {
-      drawTemplateTextOverlays(ctx);
+): Promise<HTMLCanvasElement> {
+  return new Promise((resolve) => {
+    const ctx = canvas.getContext("2d");
+    if (!ctx) {
+      resolve(canvas);
+      return;
     }
 
-    // 3. Draw dynamic Guest Name overlay
-    let fontSuffix = "cursive";
-    if (fontFamily === "Playfair Display") fontSuffix = "serif";
-    else if (fontFamily === "Montserrat") fontSuffix = "sans-serif";
-    else if (fontFamily === "JetBrains Mono") fontSuffix = "monospace";
-
-    ctx.save();
-    ctx.textAlign = "center";
-    ctx.textBaseline = "alphabetic";
+    const fontFamily = config?.fontFamily || "Great Vibes";
+    const customFontSize = config?.fontSize || 64;
+    const yOffset = config?.yOffset !== undefined ? config.yOffset : 0;
+    const xOffset = config?.xOffset !== undefined ? config.xOffset : 0;
     
-    // Default center placement aligned over the original guest line slot
-    const gY = 770;
-    const defaultCenterX = 695;
+    // Choose custom background uploaded, or default to the original attached image card
+    const bgImageSource = config?.customBackground || "/assets/width_1054.svg";
 
-    ctx.font = `500 ${customFontSize}px '${fontFamily}', ${fontSuffix}`;
-    ctx.fillStyle = "#1e1008"; // Premium deep espresso brown matching the original ink
-    
-    ctx.fillText(guestName || "", defaultCenterX + xOffset, gY - 4 + yOffset);
-    ctx.restore();
+    const width = 1200;
+    const height = 1680;
+    canvas.width = width;
+    canvas.height = height;
 
-    if (onComplete) {
-      onComplete();
+    // Set default anti-aliasing
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+
+    const img = new Image();
+    if (bgImageSource && !bgImageSource.startsWith("data:")) {
+      img.crossOrigin = "anonymous";
     }
-  };
+    img.src = bgImageSource;
+    
+    img.onload = () => {
+      // 1. Draw template image across the exact template resolution
+      ctx.drawImage(img, 0, 0, width, height);
 
-  img.onerror = (e) => {
-    console.error("Failed to load background template image inside Renderer:", e);
-    // Draw plain elegant fallback color if loading fails for any reason
-    ctx.fillStyle = "#faf5e7";
-    ctx.fillRect(0, 0, width, height);
-    
-    ctx.fillStyle = "#4a2614";
-    ctx.font = "bold 32px sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText("Failed to load template image", width / 2, height / 2 - 40);
-    ctx.fillText("Please upload an invitation image or check network connection.", width / 2, height / 2 + 10);
-    
-    ctx.font = `400 ${customFontSize}px '${fontFamily}'`;
-    ctx.fillText(guestName || "", width / 2 + xOffset, height / 2 + 140 + yOffset);
-    
-    if (onComplete) {
-      onComplete();
-    }
-  };
+      // 2. Draw all static template text content programmatically if USING DEFAULT TEMPLATE
+      // This resolves the web sandboxing block where SVG text font-family fallbacks to cursive/Arial
+      if (!config?.customBackground) {
+        drawTemplateTextOverlays(ctx);
+      }
+
+      // 3. Draw dynamic Guest Name overlay
+      let fontSuffix = "cursive";
+      if (fontFamily === "Playfair Display") fontSuffix = "serif";
+      else if (fontFamily === "Montserrat") fontSuffix = "sans-serif";
+      else if (fontFamily === "JetBrains Mono") fontSuffix = "monospace";
+
+      ctx.save();
+      ctx.textAlign = "center";
+      ctx.textBaseline = "alphabetic";
+      
+      // Default center placement aligned over the original guest line slot
+      const gY = 770;
+      const defaultCenterX = 695;
+
+      ctx.font = `500 ${customFontSize}px '${fontFamily}', ${fontSuffix}`;
+      ctx.fillStyle = "#1e1008"; // Premium deep espresso brown matching the original ink
+      
+      ctx.fillText(guestName || "", defaultCenterX + xOffset, gY - 4 + yOffset);
+      ctx.restore();
+
+      if (onComplete) {
+        onComplete();
+      }
+      resolve(canvas);
+    };
+
+    img.onerror = (e) => {
+      console.error("Failed to load background template image inside Renderer:", e);
+      // Draw plain elegant fallback color if loading fails for any reason
+      ctx.fillStyle = "#faf5e7";
+      ctx.fillRect(0, 0, width, height);
+      
+      ctx.fillStyle = "#4a2614";
+      ctx.font = "bold 32px sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("Failed to load template image", width / 2, height / 2 - 40);
+      ctx.fillText("Please upload an invitation image or check network connection.", width / 2, height / 2 + 10);
+      
+      ctx.font = `400 ${customFontSize}px '${fontFamily}'`;
+      ctx.fillText(guestName || "", width / 2 + xOffset, height / 2 + 140 + yOffset);
+      
+      if (onComplete) {
+        onComplete();
+      }
+      resolve(canvas);
+    };
+  });
 }
 
 /**
@@ -261,7 +270,7 @@ function drawTemplateTextOverlays(ctx: CanvasRenderingContext2D) {
   ctx.fillStyle = "#1a0a03";
   ctx.font = "800 26px 'Montserrat', sans-serif";
   setSpacing("0.5px");
-  ctx.fillText("10:00 AM", 177, 1324);
+  ctx.fillText("3:00 PM", 177, 1324);
   ctx.restore();
 
   // K. Small Ceramic Cup Emblem branding at bottom-right center

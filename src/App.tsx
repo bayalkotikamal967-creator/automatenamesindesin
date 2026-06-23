@@ -99,7 +99,7 @@ export default function App() {
 
         const data = await response.json();
         if (data.success && data.url) {
-          setCustomBackground(data.url);
+          setCustomBackground(dataUrl);
           try {
             localStorage.setItem("ccube_custom_background", dataUrl);
           } catch (err) {
@@ -527,7 +527,7 @@ export default function App() {
 
       try {
         // Draw each bulk invitation using clean template (absolutely no drag & resize bounding overlays)
-        drawInvitation(bulkCanvas, initialList[i].name, {
+        await drawInvitation(bulkCanvas, initialList[i].name, {
           fontFamily,
           fontSize,
           yOffset,
@@ -1223,10 +1223,10 @@ export default function App() {
                   <p className="text-[#8c2b2b]">The server quota or Gemini connection is unconfigured. Here is a generic invitation caption you can copy directly:</p>
                   <div className="bg-white p-2.5 rounded border border-red-200 mt-1 font-sans italic text-gray-700 flex justify-between items-start gap-4">
                     <span>
-                      &ldquo;You are warmly invited to the Grand Opening of C Cube Cottage – “Chatta Chiya Chat” on 2083/03/10 BS (10:00 AM) in Madhutar, Kamalamai-5, Sindhuli. Let&apos;s celebrate memorable moments over delicious food! 🍲❤️&rdquo;
+                      &ldquo;You are warmly invited to the Grand Opening of C Cube Cottage – “Chatta Chiya Chat” on 2083/03/10 BS (3:00 PM) in Madhutar, Kamalamai-5, Sindhuli. Let&apos;s celebrate memorable moments over delicious food! 🍲❤️&rdquo;
                     </span>
                     <button
-                      onClick={() => copyCaptionToClipboard(`You are warmly invited to the Grand Opening of C Cube Cottage – “Chatta Chiya Chat” on 2083/03/10 BS (10:00 AM) in Madhutar, Kamalamai-5, Sindhuli. Let's celebrate memorable moments over delicious food! 🍲❤️`, 99)}
+                      onClick={() => copyCaptionToClipboard(`You are warmly invited to the Grand Opening of C Cube Cottage – “Chatta Chiya Chat” on 2083/03/10 BS (3:00 PM) in Madhutar, Kamalamai-5, Sindhuli. Let's celebrate memorable moments over delicious food! 🍲❤️`, 99)}
                       className="p-1 px-1.5 rounded bg-gray-100 text-gray-700 hover:bg-[#4a2614] hover:text-white transition-colors self-end flex-shrink-0"
                     >
                       {copiedIndex === 99 ? <Check className="w-3.5 h-3.5 text-green-600" /> : <Copy className="w-3.5 h-3.5" />}
